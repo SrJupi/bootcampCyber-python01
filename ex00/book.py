@@ -34,7 +34,7 @@ My last update was on {self.last_update}
                         recipe_ret = recipe
                         print(f'Hey! I found the recipe for "{name}"!\nHope you enjoy it:')
                         print(recipe_ret)
-                        break
+                        return recipe_ret
         if recipe_ret == None:
             print(f'Recipe "{name}" not found in {self.name}.')
         return recipe_ret
