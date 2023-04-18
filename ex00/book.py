@@ -32,11 +32,11 @@ My last update was on {self.last_update}
                 for recipe in self.recipe_list[r_type]:
                     if recipe.name == name:
                         recipe_ret = recipe
-                        print(f"Hey! I found the recipe for {name}!\nHope you enjoy it:")
+                        print(f'Hey! I found the recipe for "{name}"!\nHope you enjoy it:')
                         print(recipe_ret)
                         break
         if recipe_ret == None:
-            print(f"Recipe {name} not found in {self.name}.")
+            print(f'Recipe "{name}" not found in {self.name}.')
         return recipe_ret
 
     def get_recipes_by_types(self, recipe_type):
@@ -49,10 +49,11 @@ My last update was on {self.last_update}
     def add_recipe(self, recipe):
         """Add a recipe to the book and update last_update"""
         if isinstance(recipe, Recipe):
-            if recipe.name in self.get_recipes_by_types(recipe.recipe_type):
-                print(f"Recipe {recipe.name} already in {self.name}")
-                return
+            for rtype in ["Starter", "Lunch", "Dessert"]:
+                if recipe.name in self.get_recipes_by_types(rtype):
+                    print(f"Recipe {recipe.name} already in {self.name}")
+                    return
             self.recipe_list[recipe.recipe_type.lower().capitalize()].append(recipe)
             self.last_update = datetime.now()
         else:
-            print(f"Recipe {recipe} not inserted in book. It is not a real recipe!")
+            print(f'Recipe "{recipe}" not inserted in book. It is not a real recipe!')

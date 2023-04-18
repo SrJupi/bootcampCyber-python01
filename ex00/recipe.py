@@ -56,24 +56,17 @@ class Recipe(object):
         return check
 
     def print_errors(self, check):
-        if check >= 64:
-            print("ERROR: Recipe type must be Starter, Lunch or Dessert")
-            check %= 64
-        if check >= 32:
-            print("ERROR: Description must be a string or empty")
-            check %= 32
-        if check >= 16 :
-            print("ERROR: Ingredients list must contain only strings")
-            check %= 16
-        if check >= 8:
-            print("ERROR: Ingredients must be a list of strings")
-            check %= 8
-        if check >= 4:
-            print("ERROR: Cooking time must be an integer and bigger than zero")
-            check %= 4
-        if check >= 2:
-            print("ERROR: Cooking level must be an integer between 0 and 5")
-            check %= 2
-        if check >= 1:
+        if check & 1:
             print("ERROR: Name must be a string")
-            check %= 1
+        if check & 2:
+            print("ERROR: Cooking level must be an integer between 0 and 5")
+        if check & 4:
+            print("ERROR: Cooking time must be an integer and bigger than zero")
+        if check & 8:
+            print("ERROR: Ingredients must be a list of strings")
+        if check & 16 :
+            print("ERROR: Ingredients list must contain only strings")
+        if check & 32:
+            print("ERROR: Description must be a string or empty")
+        if check & 64:
+            print("ERROR: Recipe type must be Starter, Lunch or Dessert")

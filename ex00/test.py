@@ -6,7 +6,8 @@ import os
 def clear():
     os.system('clear')
 
-if __name__ == "__main__":
+def history():
+    '''Amazing function to show the functionality'''
     clear()
     print('''Welcome to my test.py.
 This script will test my Book and Recipe classes that are in the book.py and recipe.py files respectively.
@@ -24,7 +25,17 @@ First lets create a book to keep all the recipes.
     -> get_recipes_by_types: return a list with the name of all recipes of the searched type;
     -> add_recipe: add a recipe to the book.
 
-As you can imagine the book is a little bit useless without any recipe.
+As you can imagine the book is a little bit useless without any recipe. Let's try to add some randon class as a Recipe to see how the book handle it. I will create the following "Recipe":
+
+    my_recipe = 'I am not a Recipe!'
+
+''')
+
+
+    my_recipe = 'I am not a Recipe!'
+    book.add_recipe(my_recipe)
+
+    input('''\nAs it is possible to see the book check it is not a Recipe class object and does no insert it to the book dictionary of recipes.
 So next we will see the Recipe class and lets create some recipes to use inside the Book class.
 (press Enter to continue)''')
     clear()
@@ -45,7 +56,7 @@ Is possible to see that name is not a string so it should raise an Error and pri
     try:
         my_recipe = Recipe(123, 0, 10, ['ing1', 'ing2'], 'Starter')
     except:
-        input("Oh oh! You are inside the except block... Some shit happened. But we can see what made the Recipe constructor fails...")
+        input("\nOH NO! You are inside the except block... Some shit happened. But we can see what made the Recipe constructor fails...")
     clear()
     input('''Now let's create a valid Recipe... Uhmm... let's make some Caipirinha:
     
@@ -55,14 +66,20 @@ So with this code should work and create a instance of a Recipe... Finally...'''
     try:
         my_recipe = Recipe('Caipirinha', 0, 5, ['Lemon', 'Ice', 'Sugar', 'Cachaça'], 'Starter', 'The only known brazilian drink')
     except:
-        input("Oh oh! You are inside the except block... Some shit happened. But we can see what made the Recipe constructor fails...")
-    input("We are outside the try/except block... so the Recipe for a Capirinha should have been created... lets print it:")
+        input("\nOH NO! You are inside the except block... Some shit happened. But we can see what made the Recipe constructor fails...")
+    input('''\nWe are outside the try/except block... so the Recipe for a Capirinha should have been created... lets print it:
+
+    print(my_recipe)
+''')
     print(my_recipe)
     input("NICE!\nNow let's add it to the book...")
     clear()
     print("So back to the book... Let's print it:")
     print(book)
-    input("Now let's add the Caipirinha to the book and print it again to see if there was updated")
+    input('''Now let's add the Caipirinha to the book and print it again to see if there was updated
+
+    book.add_recipe(my_recipe)
+''')
     book.add_recipe(my_recipe)
     print(f"\n{book}")
     input('''Oh Yeah! The book was UPDATED!
@@ -76,23 +93,35 @@ If the recipe exist on book it will print it and return its instance.
     get_recipe = book.get_recipe_by_name("Caipirinha")
 
     input('''Nice. Now you got a reference for the Caiprinha inside the book and could change it as you please (and probably broke all my program... so I will not allow it).
-Now I will quickly create some more recipes and add them to the book so we can try the get_recipe_by_types function...
-Be right back...''')
+Now let's try to get a recipe that does not exist... like Soup:
+
+    get_recipe = book.get_recipe_by_name("Soup")
+''')
+
+    get_recipe = book.get_recipe_by_name("Soup")
+
+    input('''\nAs you can see the book could not find any soup in its database.
+
+Now I will quickly create some more recipes and add them to the book so we can try the get_recipe_by_types function...''')
 
     clear()
-    print("Thinking...")
-    sleep(1)
-    print("Adding new recipes...")
+    print("Thinking in really hard recipes...")
+    sleep(1.5)
+    print("Ok... Adding new recipes...")
     book.add_recipe(Recipe('Water', 0, 1, ['Water'], 'Starter', 'It is water... what else do you need?'))
     book.add_recipe(Recipe('Pasta', 0, 3, ['Ramen Nissin', 'Flavor'], 'Lunch', 'Wow! Ready in 3min!'))
     book.add_recipe(Recipe('Salad', 0, 5, ['Tomato', 'Lettuce', 'Carrots'], 'Lunch', 'Lunch? Really? Are we on a diet?'))
     book.add_recipe(Recipe('Chocolate', 0, 1, ['Chocolate'], 'Dessert', 'Just open it and eat it... Not really difficult.'))
-    sleep(1)
+    sleep(0.3)
 
     input('''I have added another 4 recipes: 1 starter, 2 lunch and 1 dessert.
-Let's use the get_recipes_by_types to see their's names...''')
-    print("Starter:", book.get_recipes_by_types("Starter"))
+Let's use the get_recipes_by_types to see their's names...
 
+    print("Starter:", book.get_recipes_by_types("Starter"))
+    print("Lunch:", book.get_recipes_by_types("Lunch"))
+    print("Dessert:", book.get_recipes_by_types("Dessert"))
+''')
+    print("Starter:", book.get_recipes_by_types("Starter"))
     print("Lunch:", book.get_recipes_by_types("Lunch"))
     print("Dessert:", book.get_recipes_by_types("Dessert"))
 
@@ -110,5 +139,9 @@ Let's use the get_recipes_by_types to see their's names...''')
     input("Next?")
     clear()
     book.get_recipe_by_name('chocolate')
-    input("Done!")
+    input("Done! You have seen all the recipes and all functionality that is on this book! Feel free to ask me anything and create any test you want! Cheers!")
     clear()
+    pass
+
+if __name__ == "__main__":
+    history()
