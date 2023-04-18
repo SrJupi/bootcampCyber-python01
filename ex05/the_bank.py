@@ -6,7 +6,7 @@
 #    By: lsulzbac <lsulzbac@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/18 10:52:55 by lsulzbac          #+#    #+#              #
-#    Updated: 2023/04/18 12:05:01 by lsulzbac         ###   ########.fr        #
+#    Updated: 2023/04/18 13:42:30 by lsulzbac         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -58,9 +58,9 @@ class Bank(object):
         acc_dest = self.get_account(dest)
         if not acc_dest:
             return False
-        if check_account(origin):
+        if self.check_account(origin):
             return False
-        if check_account(dest):
+        if self.check_account(dest):
             return False
 
     def fix_account(self, name):
@@ -71,8 +71,8 @@ class Bank(object):
         if isinstance(name, str):
             acc = self.get_account(name)
             if acc:
-                errors = check_account(acc)
-                fix_errors(acc, errors)
+                errors = self.check_account(acc)
+                self.fix_errors(acc, errors)
                 return True
         return False
 
@@ -87,11 +87,18 @@ class Bank(object):
         print(acc_vars)
         errors = 0
         if len(acc_vars) % 2 == 0:
+            print('even')
             errors |= 1
-        for var in acc_vars:
-            print (var, var[0])
         if any(True if var[0] == 'b' else False for var in acc_vars):
+            print('start b')
             errors |= 2
+        if not any(True if var == 'addr' or var == 'zip' else False for var in acc_vars):
+            print('not addr or zip')
+            errors |= 4
+        if sum(True if var == 'id' or var == 'name' or var == 'value' else False for var in acc_vars) != 3:
+            print('not id or not name or not value')
+            errors |= 8
+
 
         return errors
 
@@ -100,6 +107,7 @@ class Bank(object):
 if __name__ == '__main__':
     bank = Bank()
     acc = Account("Lucas", btest='my_test')
+    del(acc.value)
     print(bank.add("Teste"))
     print(bank.add(acc))
     print(bank.add(acc))
