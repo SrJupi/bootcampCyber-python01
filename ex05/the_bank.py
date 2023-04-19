@@ -5,10 +5,15 @@
 #                                                     +:+ +:+         +:+      #
 #    By: lsulzbac <lsulzbac@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/04/18 10:52:55 by lsulzbac          #+#    #+#              #
-#    Updated: 2023/04/18 13:42:30 by lsulzbac         ###   ########.fr        #
+#    Created: 2023/04/19 11:47:08 by lsulzbac          #+#    #+#              #
+#    Updated: 2023/04/19 12:42:39 by lsulzbac         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+
+
+import sys
+from faker import Faker
+from random import randint
 
 class Account(object):
     ID_COUNT = 1
@@ -23,8 +28,9 @@ class Account(object):
             raise AttributeError("Attribute value cannot be negative.")
         if not isinstance(self.name, str):
             raise AttributeError("Attribute name must be a str object.")
-        def transfer(self, amount):
-            self.value += amount
+            
+    def transfer(self, amount):
+        self.value += amount
 
 class Bank(object):
     """The bank"""
@@ -52,63 +58,150 @@ class Bank(object):
 @amount: float(amount) amount to transfer
 @return True if success, False if an error occured
 """
+        if not isinstance(amount, (int, float)) or amount <= 0:
+            return False
         acc_origin = self.get_account(origin)
         if not acc_origin:
             return False
         acc_dest = self.get_account(dest)
         if not acc_dest:
             return False
-        if self.check_account(origin):
+        if self.check_account(acc_origin):
             return False
-        if self.check_account(dest):
+        if self.check_account(acc_dest):
             return False
+        if amount > acc_origin.value:
+            return False
+        if acc_origin.name != acc_dest.name:
+            acc_origin.transfer(-amount)
+            acc_dest.transfer(amount)
+        return True
 
     def fix_account(self, name):
         """ fix account associated to name if corrupted
 @name: str(name) of the account
 @return True if success, False if an error occured
 """
-        if isinstance(name, str):
-            acc = self.get_account(name)
-            if acc:
-                errors = self.check_account(acc)
-                self.fix_errors(acc, errors)
-                return True
+        acc = self.get_account(name)
+        if acc:
+            errors = self.check_account(acc)
+            self.fix_errors(acc, errors)
+            return True
         return False
 
     def get_account(self, name):
         for acc in self.accounts:
-            if acc.name == name:
-                return acc
+            try:
+                if acc.name == name:
+                    return acc
+            except:
+                pass
         return None
 
+    def fix_errors(self, acc, errors):
+        fake = Faker()
+        while(errors > 0):
+            if errors & 32:
+                setattr(acc, 'value', 0)
+            if errors & 16:
+                acc.id = Account.ID_COUNT
+                Account.ID_COUNT += 1
+            if errors & 8:
+                names = [acc.name for acc in self.accounts]
+                while True:
+                    name_rand = fake.name()
+                    if name_rand not in names:
+                        setattr(acc, 'name', name_rand)
+                        break
+            if errors & 4:
+                setattr(acc, 'zip', fake.postcode())
+            if errors & 2:
+                for item in vars(acc):
+                    if item[0] == 'b':
+                        del(item)
+            if errors & 1:
+                i = 0
+                while True:
+                    var = 'var_' + str(i)
+                    if var not in vars(acc):
+                        setattr(acc, var, 0)
+                        break
+                    i += 1
+            errors = self.check_account(acc)
+    
     def check_account(self, acc):
         acc_vars = vars(acc)
-        print(acc_vars)
         errors = 0
         if len(acc_vars) % 2 == 0:
-            print('even')
             errors |= 1
         if any(True if var[0] == 'b' else False for var in acc_vars):
-            print('start b')
             errors |= 2
         if not any(True if var == 'addr' or var == 'zip' else False for var in acc_vars):
-            print('not addr or zip')
             errors |= 4
-        if sum(True if var == 'id' or var == 'name' or var == 'value' else False for var in acc_vars) != 3:
-            print('not id or not name or not value')
+        if 'name' not in acc_vars or not isinstance(acc_vars['name'], str):
             errors |= 8
-
-
+        if 'id' not in acc_vars or not isinstance(acc_vars['id'], int):
+            errors |= 16
+        if 'value' not in acc_vars or not isinstance(acc_vars['value'], (int, float)):
+            errors |= 32
         return errors
 
 
 
 if __name__ == '__main__':
+    print("Exemple 1:")
     bank = Bank()
-    acc = Account("Lucas", btest='my_test')
-    del(acc.value)
-    print(bank.add("Teste"))
-    print(bank.add(acc))
-    print(bank.add(acc))
-    print(bank.check_account(acc))
+    acc = Account(
+        'Smith Jane',
+        zip='911-745',
+        value=1000.0,
+        bref='1044618427ff2782f0bbece0abd05f31'
+    )
+    bank.add(acc)
+    acc =Account(
+        'William John',
+        zip='100-064',
+        value=6460.0,
+        ref='58ba2b9954cd278eda8a84147ca73c87',
+        info=None,
+        other='This is the vice president of the corporation'
+    )
+    bank.add(acc)
+
+    if bank.transfer('William John', 'Smith Jane', 545.0) is False:
+        print('Failed')
+    else:
+        print('Success')
+
+
+    print("\nExemple 2:")
+
+    bank = Bank()
+    acc1 = Account(
+        'Smith Jane',
+        zip='911-745',
+        value=1000.0,
+        ref='1044618427ff2782f0bbece0abd05f31')
+    bank.add(acc1)
+    acc2 = Account(
+        'William John',
+        zip='100-064',
+        value=6460.0,
+        ref='58ba2b9954cd278eda8a84147ca73c87',
+        info=None)
+    bank.add(acc2)
+    print(acc1.name, acc1.value)
+    print(acc2.name, acc2.value)
+
+    if bank.transfer('William John', 'Smith Jane', 1000.0) is False:
+        print('Failed')
+
+        bank.fix_account('William John')
+        bank.fix_account('Smith Jane')
+
+    if bank.transfer('William John', 'Smith Jane', 1000.0) is False:
+        print('Failed')
+    else:
+        print('Success')
+        print(acc1.name, acc1.value)
+        print(acc2.name, acc2.value)
