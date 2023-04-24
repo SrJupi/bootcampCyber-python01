@@ -6,16 +6,13 @@
 #    By: lsulzbac <lsulzbac@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/19 12:44:46 by lsulzbac          #+#    #+#              #
-#    Updated: 2023/04/20 13:45:56 by lsulzbac         ###   ########.fr        #
+#    Updated: 2023/04/24 11:55:14 by lsulzbac         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-import sys
-sys.tracebacklimit=0
-
 class Vector:
     def __init__ (self, value):
-        self.value = None
+        self.values = None
         if isinstance(value,(int)):
             if value > 0:
                 value = (0, value)
@@ -25,15 +22,15 @@ class Vector:
                     self.handle_tuple(value)
         if isinstance(value, list) and len(value) > 0:
             self.handle_list(value)
-        if self.value == None:
+        if self.values == None:
             raise TypeError('Value not valid')
-        self.shape = (len(self.value),len(self.value[0]))
-        
+        self.shape = (len(self.values),len(self.values[0]))
+
     def handle_tuple(self, value):
-        self.value = []
+        self.values = []
         for i in range (value[0], value[1]):
-            self.value.append([float(i)])
-    
+            self.values.append([float(i)])
+
     def handle_list(self, value):
         if len(value) == 1:
             if not all(isinstance(x, (float, int)) for x in value[0]):
@@ -41,98 +38,73 @@ class Vector:
         else:
             if not all(len(x) == 1 and isinstance(x[0], (float, int)) for x in value):
                 return
-        '''
-        inner_lst = value[0]
-        print(value, '-', inner_lst)
-        if not isinstance(inner_lst, list):
-            return
-        if len(inner_lst) == 0:
-            return
-        if isinstance(inner_lst[0], (float, int)):
-            if not all(isinstance(x, (float, int)) for x in inner_lst):
-                return
-        if isinstance(inner_lst[0], list):
-            if not all(len(x) == 1 and isinstance(x[0], (float, int)) for x in inner_list):
-                return'''
-        self.value = value
+        self.values = value
 
     def T(self):
         '''Return the transpose vector'''
-        pass
+        if self.shape[0] == 1:
+            return Vector([[num] for num in self.values[0]])
+        else:
+            return Vector([[lst[0] for lst in self.values]])
     def dot(self, other):
         '''Return the dot product between two vectors of same shape'''
-        pass
-    
-    ### Review add and mult... row should be [[1, 2, 3]] and it was coded to handle [1, 2, 3]
+        if isinstance(other, Vector):
+            if other.shape == self.shape:
+                if self.shape[0] == 1:
+                    return sum([x * y for x, y in zip(self.values[0], other.values[0])])
+                else:
+                    return sum([item[0] * other.values[i][0] for i, item in enumerate(self.values)])
+            else:
+                raise NotImplementedError('dot product between Vectors of different shape not implemented')
+        raise NotImplementedError(f'dot product between {type(self).__name__} and {type(other).__name__} not implemented')
+
+
     def __radd__(self, other):
-        return self.__add__(other)
-        
+        return self + other
+
     def __add__(self, other):
         '''Return the sum between two vectors of same shape'''
         if isinstance(other, Vector):
             if other.shape == self.shape:
-                tmp = [x+y for x,y in zip(self.value, other.value)]
-                if isinstance(tmp[0], list):
-                    tmp = [[sum(item)] for item in tmp]
-                return Vector(tmp)
+                if self.shape[0] == 1:
+                    return Vector([[x + y for x, y in zip(self.values[0], other.values[0])]])
+                else:
+                    return Vector([[item[0] + other.values[i][0]] for i, item in enumerate(self.values)])
             else:
                 raise NotImplementedError('sum between Vectors of different shape not implemented')
         raise NotImplementedError(f'sum between {type(self).__name__} and {type(other).__name__} not implemented')
-    
+
     def __rsub__(self, other):
-        return self.__sub__(other)
+        return self - other
 
     def __sub__(self, other):
         '''Return the difference between two vectors of same shape'''
         if isinstance(other, Vector):
             if other.shape == self.shape:
-                #do the sub and return Vector
-                pass
+                return self + (other * -1)
             else:
                 raise NotImplementedError('subtraction between Vectors of different shape not implemented')
         raise NotImplementedError(f'subtraction between {type(self).__name__} and {type(other).__name__} not implemented')
 
     def __rmul__(self, other):
-        return self.__mult__(other)
-        
-    def __mult__(self, other):
+        return self * other
+
+    def __mul__(self, other):
         ''''Return the multiplication between a scalar and a vector'''
         if isinstance(other, (float, int)):
-            tmp = [x * other for x in self.value]
-            if isinstance(tmp[0], list):
-                tmp = [[sum(item)] for item in tmp]
-            return Vector(tmp)
-        raise NotImplementedError(f'multiplication between {type(self)} and {type(other)} not implemented')
-    
+            return Vector([[other * x for x in item] for item in self.values])
+        raise NotImplementedError(f'multiplication between {type(self).__name__} and {type(other).__name__} not implemented')
+
     def __rtruediv__(self, other):
-        raise NotImplementedError(f'division between {type(other)} and {type(self)} not implemented')
+        raise NotImplementedError(f'division between {type(other).__name__} and {type(self).__name__} not implemented')
 
     def __truediv__(self, other):
-        pass
+        if isinstance(other, (float, int)):
+            return self * (1 / other)
+        raise NotImplementedError(f'division between {type(self).__name__} and {type(other).__name__} not implemented')
 
     def __str__(self):
-        txt = f'Vector({self.value})'
-        return txt
+        return f'Vector({self.values})'
 
     def __repr__(self):
-        return self.__str__
-        
-if __name__ == '__main__':
-    
-    x = Vector([[1.], [2.], [3.]])
-    print(x.shape)
-    y = Vector([[2.], [4.], [6.]])
-    print(y.shape)
-    z = Vector([[1., 2, 3.]])
-    print(z)
-    print(z.shape)
-    print(x + y)
-    print(x + y)
-    print(5 * y)
-    print('x:',x.value)
-    print('y:',y.value)
-    
-    
-    a = Vector((1))
-    print(a)
-    print(a.shape)
+        return self.__str__()
