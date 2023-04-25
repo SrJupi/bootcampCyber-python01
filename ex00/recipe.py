@@ -1,3 +1,7 @@
+import sys
+
+sys.tracebacklimit = 0
+
 class Recipe(object):
     '''Recipe Class: keep good food inside!'''
 
@@ -13,8 +17,8 @@ class Recipe(object):
         self.recipe_type = rtype
         check = self.check_inputs()
         if check > 0:
-            self.print_errors(check)
-            raise TypeError("Check your parameters!")
+            msgs = self.print_errors(check)
+            raise TypeError("ERROR: " + ", ".join(msgs))
 
     def __str__(self):
         txt = f'''{'~'*50}
@@ -24,7 +28,7 @@ class Recipe(object):
     -> Ingredients:
         {', '.join(self.ingredients)}
     -> Cooking time: {self.cooking_time} min
-    -> Cooking level: {self.cooking_lvl} min
+    -> Cooking level: {self.cooking_lvl}
     -> Recipe type: {self.recipe_type}
 {'~'*50}'''
         return txt
@@ -36,11 +40,11 @@ class Recipe(object):
             check |= 1
         else:
             self.name = self.name.lower().capitalize()
-        if not isinstance(self.cooking_lvl, int) or self.cooking_lvl < 0 or self.cooking_lvl > 5: 
+        if not isinstance(self.cooking_lvl, int) or self.cooking_lvl < 1 or self.cooking_lvl > 5: 
             check |= 2
         if not isinstance(self.cooking_time, int) or self.cooking_time < 1:
             check |= 4
-        if not isinstance(self.ingredients, list):
+        if not isinstance(self.ingredients, list) or len(self.ingredients) == 0:
             check |= 8
         else:
             for ing in self.ingredients:
@@ -51,22 +55,24 @@ class Recipe(object):
             self.description = ""
         if not isinstance(self.description, str):
             check |= 32
-        if not isinstance(self.recipe_type, str) or self.recipe_type not in valid_types:
+        if not isinstance(self.recipe_type, str) or self.recipe_type.lower().capitalize() not in valid_types:
             check |= 64
         return check
 
     def print_errors(self, check):
+        msgs = []
         if check & 1:
-            print("ERROR: Name must be a string")
+            msgs.append("Name must be a string")
         if check & 2:
-            print("ERROR: Cooking level must be an integer between 0 and 5")
+            msgs.append("Cooking level must be an integer between 1 and 5")
         if check & 4:
-            print("ERROR: Cooking time must be an integer and bigger than zero")
+            msgs.append("Cooking time must be an integer and bigger than zero")
         if check & 8:
-            print("ERROR: Ingredients must be a list of strings")
+            msgs.append("Ingredients must be a list of strings")
         if check & 16 :
-            print("ERROR: Ingredients list must contain only strings")
+            msgs.append("Ingredients list must contain only strings")
         if check & 32:
-            print("ERROR: Description must be a string or empty")
+            msgs.append("Description must be a string or empty")
         if check & 64:
-            print("ERROR: Recipe type must be Starter, Lunch or Dessert")
+            msgs.append("Recipe type must be Starter, Lunch or Dessert")
+        return msgs

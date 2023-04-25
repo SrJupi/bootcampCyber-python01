@@ -28,7 +28,7 @@ My last update was on {self.last_update}
         recipe_ret = None
         name = name.lower().capitalize()
         for r_type in ["Starter", "Lunch", "Dessert"]:
-            if name in self.get_recipes_by_types(r_type):
+            if name in [recipe.name for recipe in self.get_recipes_by_types(r_type)]:
                 for recipe in self.recipe_list[r_type]:
                     if recipe.name == name:
                         recipe_ret = recipe
@@ -43,7 +43,7 @@ My last update was on {self.last_update}
         """Get all recipe names for a given recipe_type """
         recipe_type = recipe_type.lower().capitalize()
         if recipe_type in ["Starter", "Lunch", "Dessert"]:
-            return [recipe.name for recipe in self.recipe_list[recipe_type]]
+            return self.recipe_list[recipe_type]
         return []
 
     def add_recipe(self, recipe):
@@ -55,5 +55,6 @@ My last update was on {self.last_update}
                     return
             self.recipe_list[recipe.recipe_type.lower().capitalize()].append(recipe)
             self.last_update = datetime.now()
+            print(f'Recipe "{recipe.name}" inserted in book!')
         else:
             print(f'Recipe "{recipe}" not inserted in book. It is not a real recipe!')
