@@ -6,13 +6,12 @@
 #    By: lsulzbac <lsulzbac@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/19 11:47:08 by lsulzbac          #+#    #+#              #
-#    Updated: 2023/04/19 12:42:39 by lsulzbac         ###   ########.fr        #
+#    Updated: 2023/04/25 12:43:24 by lsulzbac         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 
 import sys
-from faker import Faker
 from random import randint
 
 class Account(object):
@@ -99,26 +98,22 @@ class Bank(object):
         return None
 
     def fix_errors(self, acc, errors):
-        fake = Faker()
         while(errors > 0):
             if errors & 32:
                 setattr(acc, 'value', 0)
             if errors & 16:
-                acc.id = Account.ID_COUNT
+                setattr(acc, 'id', Account.ID_COUNT)
                 Account.ID_COUNT += 1
             if errors & 8:
-                names = [acc.name for acc in self.accounts]
-                while True:
-                    name_rand = fake.name()
-                    if name_rand not in names:
-                        setattr(acc, 'name', name_rand)
-                        break
+                new_name = "NAME NOT AVAIABLE FOR ID " + {self.id}
+                setattr(acc, 'name', new_name)
             if errors & 4:
-                setattr(acc, 'zip', fake.postcode())
+                setattr(acc, 'zip', "NO ZIP CODE")
             if errors & 2:
                 for item in vars(acc):
                     if item[0] == 'b':
-                        del(item)
+                        delattr(acc, item)
+                        break
             if errors & 1:
                 i = 0
                 while True:
