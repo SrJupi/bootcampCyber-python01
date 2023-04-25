@@ -6,24 +6,41 @@
 #    By: lsulzbac <lsulzbac@student.42barcel>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/19 12:44:46 by lsulzbac          #+#    #+#              #
-#    Updated: 2023/04/24 11:55:14 by lsulzbac         ###   ########.fr        #
+#    Updated: 2023/04/25 13:48:28 by lsulzbac         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 class Vector:
     def __init__ (self, value):
+        '''Vector constructor
+Args:
+    value: value to initialize the Vector, must be:
+        -> a list of a list of floats: Vector([[0., 1., 2., 3.]])
+        -> a list of lists of single float: Vector([[0.], [1.], [2.], [3.]])
+        -> a size: Vector(3)
+        -> a range: Vector((10, 16))
+Return:
+    A Vector
+    Raise TypeError if Vector could not be created'''
         self.values = None
         if isinstance(value,(int)):
             if value > 0:
                 value = (0, value)
-        if isinstance(value,tuple):
-            if len(value) == 2:
+                self.handle_tuple(value)
+            else:
+                raise TypeError('Size of vector must be positive')
+        elif isinstance(value,tuple):
+            if len(value) == 2 and isinstance(value[0], int) and isinstance(value[1], int):
                 if value[0] < value[1]:
                     self.handle_tuple(value)
-        if isinstance(value, list) and len(value) > 0:
+                else:
+                    raise TypeError('Range: first item must be smaller or equal than second item')
+            else:
+                raise TypeError('Range must have only two integers')
+        elif isinstance(value, list) and len(value) > 0:
             self.handle_list(value)
         if self.values == None:
-            raise TypeError('Value not valid')
+            raise TypeError('Value not valid. Check docstring.')
         self.shape = (len(self.values),len(self.values[0]))
 
     def handle_tuple(self, value):
@@ -33,11 +50,13 @@ class Vector:
 
     def handle_list(self, value):
         if len(value) == 1:
-            if not all(isinstance(x, (float, int)) for x in value[0]):
-                return
+            for x in value[0]:
+                if not isinstance(x, (float, int)):
+                    raise TypeError('Row vector must contain only numbers')
         else:
-            if not all(len(x) == 1 and isinstance(x[0], (float, int)) for x in value):
-                return
+            for x in value:
+                if not isinstance(x, list) or len(x) != 1 or not isinstance(x[0], (float, int)):
+                    raise TypeError('Column vector must contain only lists with a single number')
         self.values = value
 
     def T(self):
