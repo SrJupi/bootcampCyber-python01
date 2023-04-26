@@ -2,13 +2,14 @@ import sys
 
 sys.tracebacklimit = 0
 
+
 class Recipe(object):
-    '''Recipe Class: keep good food inside!'''
+    """Recipe Class: keep good food inside!"""
 
     def __init__(self,
-            name, lvl,
-            time, ing,
-            rtype, desc=None):
+                 name, lvl,
+                 time, ing,
+                 rtype, desc=None):
         self.name = name
         self.cooking_lvl = lvl
         self.cooking_time = time
@@ -21,7 +22,7 @@ class Recipe(object):
             raise TypeError("ERROR: " + ", ".join(msgs))
 
     def __str__(self):
-        txt = f'''{'~'*50}
+        txt = f'''{'~' * 50}
 {self.name.upper()}
     -> Description:
         {self.description}
@@ -30,7 +31,7 @@ class Recipe(object):
     -> Cooking time: {self.cooking_time} min
     -> Cooking level: {self.cooking_lvl}
     -> Recipe type: {self.recipe_type}
-{'~'*50}'''
+{'~' * 50}'''
         return txt
 
     def check_inputs(self):
@@ -40,7 +41,7 @@ class Recipe(object):
             check |= 1
         else:
             self.name = self.name.lower().capitalize()
-        if not isinstance(self.cooking_lvl, int) or self.cooking_lvl < 1 or self.cooking_lvl > 5: 
+        if not isinstance(self.cooking_lvl, int) or self.cooking_lvl < 1 or self.cooking_lvl > 5:
             check |= 2
         if not isinstance(self.cooking_time, int) or self.cooking_time < 1:
             check |= 4
@@ -51,7 +52,7 @@ class Recipe(object):
                 if not isinstance(ing, str):
                     check |= 16
                     break
-        if self.description == None:
+        if self.description is None:
             self.description = ""
         if not isinstance(self.description, str):
             check |= 32
@@ -69,7 +70,7 @@ class Recipe(object):
             msgs.append("Cooking time must be an integer and bigger than zero")
         if check & 8:
             msgs.append("Ingredients must be a list of strings")
-        if check & 16 :
+        if check & 16:
             msgs.append("Ingredients list must contain only strings")
         if check & 32:
             msgs.append("Description must be a string or empty")

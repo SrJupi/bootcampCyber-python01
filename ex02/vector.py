@@ -11,8 +11,8 @@
 # **************************************************************************** #
 
 class Vector:
-    def __init__ (self, value):
-        '''Vector constructor
+    def __init__(self, value):
+        """Vector constructor
 Args:
     value: value to initialize the Vector, must be:
         -> a list of a list of floats: Vector([[0., 1., 2., 3.]])
@@ -21,15 +21,15 @@ Args:
         -> a range: Vector((10, 16))
 Return:
     A Vector
-    Raise TypeError if Vector could not be created'''
+    Raise TypeError if Vector could not be created"""
         self.values = None
-        if isinstance(value,(int)):
+        if isinstance(value, int):
             if value > 0:
                 value = (0, value)
                 self.handle_tuple(value)
             else:
                 raise TypeError('Size of vector must be positive')
-        elif isinstance(value,tuple):
+        elif isinstance(value, tuple):
             if len(value) == 2 and isinstance(value[0], int) and isinstance(value[1], int):
                 if value[0] < value[1]:
                     self.handle_tuple(value)
@@ -39,13 +39,13 @@ Return:
                 raise TypeError('Range must have only two integers')
         elif isinstance(value, list) and len(value) > 0:
             self.handle_list(value)
-        if self.values == None:
+        if self.values is None:
             raise TypeError('Value not valid. Check docstring.')
-        self.shape = (len(self.values),len(self.values[0]))
+        self.shape = (len(self.values), len(self.values[0]))
 
     def handle_tuple(self, value):
         self.values = []
-        for i in range (value[0], value[1]):
+        for i in range(value[0], value[1]):
             self.values.append([float(i)])
 
     def handle_list(self, value):
@@ -60,13 +60,14 @@ Return:
         self.values = value
 
     def T(self):
-        '''Return the transpose vector'''
+        """Return the transpose vector"""
         if self.shape[0] == 1:
             return Vector([[num] for num in self.values[0]])
         else:
             return Vector([[lst[0] for lst in self.values]])
+
     def dot(self, other):
-        '''Return the dot product between two vectors of same shape'''
+        """Return the dot product between two vectors of same shape"""
         if isinstance(other, Vector):
             if other.shape == self.shape:
                 if self.shape[0] == 1:
@@ -75,14 +76,14 @@ Return:
                     return sum([item[0] * other.values[i][0] for i, item in enumerate(self.values)])
             else:
                 raise NotImplementedError('dot product between Vectors of different shape not implemented')
-        raise NotImplementedError(f'dot product between {type(self).__name__} and {type(other).__name__} not implemented')
-
+        raise NotImplementedError(
+            f'dot product between {type(self).__name__} and {type(other).__name__} not implemented')
 
     def __radd__(self, other):
         return self + other
 
     def __add__(self, other):
-        '''Return the sum between two vectors of same shape'''
+        """Return the sum between two vectors of same shape"""
         if isinstance(other, Vector):
             if other.shape == self.shape:
                 if self.shape[0] == 1:
@@ -97,22 +98,24 @@ Return:
         return self - other
 
     def __sub__(self, other):
-        '''Return the difference between two vectors of same shape'''
+        """Return the difference between two vectors of same shape"""
         if isinstance(other, Vector):
             if other.shape == self.shape:
                 return self + (other * -1)
             else:
                 raise NotImplementedError('subtraction between Vectors of different shape not implemented')
-        raise NotImplementedError(f'subtraction between {type(self).__name__} and {type(other).__name__} not implemented')
+        raise NotImplementedError(
+            f'subtraction between {type(self).__name__} and {type(other).__name__} not implemented')
 
     def __rmul__(self, other):
         return self * other
 
     def __mul__(self, other):
-        ''''Return the multiplication between a scalar and a vector'''
+        """'Return the multiplication between a scalar and a vector"""
         if isinstance(other, (float, int)):
             return Vector([[other * x for x in item] for item in self.values])
-        raise NotImplementedError(f'multiplication between {type(self).__name__} and {type(other).__name__} not implemented')
+        raise NotImplementedError(
+            f'multiplication between {type(self).__name__} and {type(other).__name__} not implemented')
 
     def __rtruediv__(self, other):
         raise NotImplementedError(f'division between {type(other).__name__} and {type(self).__name__} not implemented')

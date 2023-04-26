@@ -20,10 +20,10 @@ class Evaluator:
         if not all(isinstance(x, (int, float)) for x in coefs):
             return -1
         value = 0
-        for pair in zip (coefs, words):
+        for pair in zip(coefs, words):
             value += pair[0] * len(pair[1])
-        return (value)
-        
+        return value
+
     @staticmethod
     def enumerate_evaluate(coefs, words):
         if len(coefs) != len(words):
@@ -33,6 +33,6 @@ class Evaluator:
         if not all(isinstance(x, (int, float)) for x in coefs):
             return -1
         value = 0
-        for i, word in enumerate (words):
+        for i, word in enumerate(words):
             value += coefs[i] * len(word)
-        return (value)
+        return value

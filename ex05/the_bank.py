@@ -11,11 +11,9 @@
 # **************************************************************************** #
 
 
-import sys
-from random import randint
-
 class Account(object):
     ID_COUNT = 1
+
     def __init__(self, name, **kwargs):
         self.__dict__.update(kwargs)
         self.id = self.ID_COUNT
@@ -27,25 +25,28 @@ class Account(object):
             raise AttributeError("Attribute value cannot be negative.")
         if not isinstance(self.name, str):
             raise AttributeError("Attribute name must be a str object.")
-            
+
     def transfer(self, amount):
         self.value += amount
 
+
 class Bank(object):
     """The bank"""
+
     def __init__(self):
         self.accounts = []
+
     def add(self, new_account):
         """ Add new_account in the Bank
 @new_account: Account() new account to append
-@return True if success, False if an error occured
+@return True if success, False if an error occurred
 """
         # test if new_account is an Account() instance and if
         # it can be appended to the attribute accounts
         if not isinstance(new_account, Account):
             return False
-        for acc in self.accounts:
-            if new_account.name == acc.name:
+        for account in self.accounts:
+            if new_account.name == account.name:
                 return False
         self.accounts.append(new_account)
         return True
@@ -55,7 +56,7 @@ class Bank(object):
 @origin: str(name) of the first account
 @dest: str(name) of the destination account
 @amount: float(amount) amount to transfer
-@return True if success, False if an error occured
+@return True if success, False if an error occurred
 """
         if not isinstance(amount, (int, float)) or amount <= 0:
             return False
@@ -79,53 +80,50 @@ class Bank(object):
     def fix_account(self, name):
         """ fix account associated to name if corrupted
 @name: str(name) of the account
-@return True if success, False if an error occured
+@return True if success, False if an error occurred
 """
-        acc = self.get_account(name)
-        if acc:
-            errors = self.check_account(acc)
-            self.fix_errors(acc, errors)
+        account = self.get_account(name)
+        if account:
+            errors = self.check_account(account)
+            self.fix_errors(account, errors)
             return True
         return False
 
     def get_account(self, name):
-        for acc in self.accounts:
-            try:
-                if acc.name == name:
-                    return acc
-            except:
-                pass
+        for account in self.accounts:
+            if hasattr(account, 'name') and account.name == name:
+                return account
         return None
 
-    def fix_errors(self, acc, errors):
-        while(errors > 0):
+    def fix_errors(self, account, errors):
+        while errors > 0:
             if errors & 32:
-                setattr(acc, 'value', 0)
+                setattr(account, 'value', 0)
             if errors & 16:
-                setattr(acc, 'id', Account.ID_COUNT)
+                setattr(account, 'id', Account.ID_COUNT)
                 Account.ID_COUNT += 1
             if errors & 8:
-                new_name = "NAME NOT AVAIABLE FOR ID " + {self.id}
-                setattr(acc, 'name', new_name)
+                new_name = "NAME NOT AVAILABLE FOR ID " + str({account.id})
+                setattr(account, 'name', new_name)
             if errors & 4:
-                setattr(acc, 'zip', "NO ZIP CODE")
+                setattr(account, 'zip', "NO ZIP CODE")
             if errors & 2:
-                for item in vars(acc):
+                for item in vars(account):
                     if item[0] == 'b':
-                        delattr(acc, item)
+                        delattr(account, item)
                         break
             if errors & 1:
                 i = 0
                 while True:
                     var = 'var_' + str(i)
-                    if var not in vars(acc):
-                        setattr(acc, var, 0)
+                    if var not in vars(account):
+                        setattr(account, var, 0)
                         break
                     i += 1
-            errors = self.check_account(acc)
-    
-    def check_account(self, acc):
-        acc_vars = vars(acc)
+            errors = self.check_account(account)
+
+    def check_account(self, account):
+        acc_vars = vars(account)
         errors = 0
         if len(acc_vars) % 2 == 0:
             errors |= 1
@@ -142,9 +140,8 @@ class Bank(object):
         return errors
 
 
-
 if __name__ == '__main__':
-    print("Exemple 1:")
+    print("Example 1:")
     bank = Bank()
     acc = Account(
         'Smith Jane',
@@ -153,7 +150,7 @@ if __name__ == '__main__':
         bref='1044618427ff2782f0bbece0abd05f31'
     )
     bank.add(acc)
-    acc =Account(
+    acc = Account(
         'William John',
         zip='100-064',
         value=6460.0,
@@ -168,8 +165,7 @@ if __name__ == '__main__':
     else:
         print('Success')
 
-
-    print("\nExemple 2:")
+    print("\nExample 2:")
 
     bank = Bank()
     acc1 = Account(

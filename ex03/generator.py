@@ -12,26 +12,25 @@
 
 from random import randint
 
+
 def do_my_shuffle(lst):
-    for i in range(len(lst)-1,0,-1):
+    for i in range(len(lst) - 1, 0, -1):
         # Pick a random index from 0 to i
-        j = randint(0,i)
- 
+        j = randint(0, i)
+
         # Swap arr[i] with the element at random index
-        lst[i],lst[j] = lst[j],lst[i]
+        lst[i], lst[j] = lst[j], lst[i]
+
 
 def generator(text, sep=" ", option=None):
-    '''Splits the text according to sep value and yield the substrings.
-    option precise if a action is performed to the substrings before it is yielded.
-    '''
+    """Splits the text according to sep value and yield the substrings.
+    option precise if an action is performed to the substrings before it is yielded.
+    """
     valid_options = ['shuffle', 'unique', 'ordered', None]
-    if not isinstance(text,str) or option not in valid_options:
+    if not isinstance(text, str) or option not in valid_options:
         yield 'ERROR'
     else:
-        try:
-            text = text.split(sep)
-        except:
-            text = text.split()
+        text = text.split(sep)
         if option == 'shuffle':
             do_my_shuffle(text)
         elif option == 'unique':
