@@ -179,7 +179,8 @@ if __name__ == '__main__':
         zip='100-064',
         value=6460.0,
         ref='58ba2b9954cd278eda8a84147ca73c87',
-        info=None)
+        info=None,
+        b_account='Test')
     bank.add(acc2)
     print(acc1.name, acc1.value)
     print(acc2.name, acc2.value)
@@ -187,8 +188,13 @@ if __name__ == '__main__':
     if bank.transfer('William John', 'Smith Jane', 1000.0) is False:
         print('Failed')
 
-        bank.fix_account('William John')
-        bank.fix_account('Smith Jane')
+        print('check William John errors =', bank.check_account(bank.get_account('William John')))
+        print('check William John attr =', vars(bank.get_account('William John')))
+        print('fix William John =', bank.fix_account('William John'))
+        print('check William John errors =', bank.check_account(bank.get_account('William John')))
+        print('check William John attr =', vars(bank.get_account('William John')))
+        print('check Smith Jane errors =', bank.check_account(bank.get_account('Smith Jane')))
+        print('fix Smith Jane =', bank.fix_account('Smith Jane'))
 
     if bank.transfer('William John', 'Smith Jane', 1000.0) is False:
         print('Failed')
