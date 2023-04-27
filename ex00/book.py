@@ -28,7 +28,7 @@ My last update was on {self.last_update}
         """Prints a recipe with the name and returns the instance"""
         recipe_ret = None
         name = name.lower().capitalize()
-        for r_type in ["Starter", "Lunch", "Dessert"]:
+        for r_type in self.recipe_list:
             if name in [recipe.name for recipe in self.get_recipes_by_types(r_type)]:
                 for recipe in self.recipe_list[r_type]:
                     if recipe.name == name:
@@ -47,15 +47,15 @@ My last update was on {self.last_update}
             return self.recipe_list[recipe_type]
         return []
 
-    def add_recipe(self, recipe):
+    def add_recipe(self, new_recipe):
         """Add a recipe to the book and update last_update"""
-        if isinstance(recipe, Recipe):
-            for rtype in ["Starter", "Lunch", "Dessert"]:
-                if recipe.name in self.get_recipes_by_types(rtype):
-                    print(f"Recipe {recipe.name} already in {self.name}")
+        if isinstance(new_recipe, Recipe):
+            for rtype in self.recipe_list:
+                if new_recipe.name in [recipe.name for recipe in self.get_recipes_by_types(rtype)]:
+                    print(f"Recipe {new_recipe.name} already in {self.name}")
                     return
-            self.recipe_list[recipe.recipe_type.lower().capitalize()].append(recipe)
+            self.recipe_list[new_recipe.recipe_type.lower().capitalize()].append(new_recipe)
             self.last_update = datetime.now()
-            print(f'Recipe "{recipe.name}" inserted in book!')
+            print(f'Recipe "{new_recipe.name}" inserted in book!')
         else:
-            print(f'Recipe "{recipe}" not inserted in book. It is not a real recipe!')
+            print(f'Recipe "{new_recipe}" not inserted in book. It is not a real recipe!')
